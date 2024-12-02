@@ -12,6 +12,8 @@ import static org.assertj.core.api.Assertions.*;
 import com.springcloud.demo.asksmicroservice.asks.repository.AskSpecification;
 import com.springcloud.demo.asksmicroservice.client.rooms.RoomClientImpl;
 import com.springcloud.demo.asksmicroservice.client.rooms.dto.RoomDTO;
+import com.springcloud.demo.asksmicroservice.client.users.UserClientImpl;
+import com.springcloud.demo.asksmicroservice.client.users.UserDTO;
 import com.springcloud.demo.asksmicroservice.dto.SimpleResponseDTO;
 import com.springcloud.demo.asksmicroservice.exceptions.NotFoundException;
 import com.springcloud.demo.asksmicroservice.messaging.MessagingProducer;
@@ -48,6 +50,9 @@ class AskServiceTest {
 
     @Mock
     private RoomClientImpl roomClient;
+
+    @Mock
+    private UserClientImpl userClient;
 
     @Mock
     private MessagingProducer messagingProducer;
@@ -87,6 +92,7 @@ class AskServiceTest {
             createAskDTO.setRoomId(UUID.randomUUID().toString());
 
             given(roomClient.findById(anyString())).willReturn(new RoomDTO());
+            given(userClient.findById(any())).willReturn(new UserDTO());
             given(askRepository.save(any(Ask.class))).willReturn(mockedAsk);
             willDoNothing().given(messagingProducer).sendMessage(anyString(), anyString());
 

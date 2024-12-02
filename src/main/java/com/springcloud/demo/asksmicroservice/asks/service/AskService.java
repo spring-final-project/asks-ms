@@ -10,6 +10,8 @@ import com.springcloud.demo.asksmicroservice.asks.repository.AskRepository;
 import com.springcloud.demo.asksmicroservice.asks.repository.AskSpecification;
 import com.springcloud.demo.asksmicroservice.client.rooms.RoomClientImpl;
 import com.springcloud.demo.asksmicroservice.client.rooms.dto.RoomDTO;
+import com.springcloud.demo.asksmicroservice.client.users.UserClientImpl;
+import com.springcloud.demo.asksmicroservice.client.users.UserDTO;
 import com.springcloud.demo.asksmicroservice.dto.SimpleResponseDTO;
 import com.springcloud.demo.asksmicroservice.exceptions.ForbiddenException;
 import com.springcloud.demo.asksmicroservice.exceptions.NotFoundException;
@@ -30,6 +32,7 @@ public class AskService {
     private final AskRepository askRepository;
     private final AskSpecification askSpecification;
     private final RoomClientImpl roomClient;
+    private final UserClientImpl userClient;
     private final MessagingProducer messagingProducer;
 
     @Value("${spring.kafka.topics.ASK_CREATED_TOPIC}")
@@ -38,18 +41,19 @@ public class AskService {
     public ResponseAskDTO create(CreateAskDTO createAskDTO, String idUserLogged) {
 
 //        Check exist room
-        roomClient.findById(createAskDTO.getRoomId());
+        RoomDTO room = roomClient.findById(createAskDTO.getRoomId());
+        UserDTO owner = userClient.findById(room.getOwnerId());
+        room.setOwner(owner);
+        UserDTO user = userClient.findById(idUserLogged);
 
         Ask askCreated = AskMapper.createAskDtoToAsk(createAskDTO);
         askCreated.setUserId(idUserLogged);
 
         askCreated = askRepository.save(askCreated);
 
-        ResponseAskDTO responseAskDTO = AskMapper.askToResponseAskDto(askCreated);
+        messagingProducer.sendMessage(askCreatedTopic, JsonUtils.toJson(AskMapper.askToPublishAskEventDto(askCreated,room,user)));
 
-        messagingProducer.sendMessage(askCreatedTopic, JsonUtils.toJson(responseAskDTO));
-
-        return responseAskDTO;
+        return AskMapper.askToResponseAskDto(askCreated);
     }
 
     public List<ResponseAskDTO> findAll(FilterAskDTO filters) {

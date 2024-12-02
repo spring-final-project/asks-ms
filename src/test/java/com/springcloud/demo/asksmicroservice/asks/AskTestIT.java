@@ -12,6 +12,7 @@ import static org.mockito.BDDMockito.*;
 
 import com.springcloud.demo.asksmicroservice.client.rooms.RoomClientImpl;
 import com.springcloud.demo.asksmicroservice.client.rooms.dto.RoomDTO;
+import com.springcloud.demo.asksmicroservice.client.users.UserClientImpl;
 import com.springcloud.demo.asksmicroservice.messaging.MessagingProducer;
 import org.hamcrest.Matchers;
 import org.hibernate.AssertionFailure;
@@ -47,6 +48,9 @@ public class AskTestIT {
 
     @MockBean
     private RoomClientImpl roomClient;
+
+    @MockBean
+    private UserClientImpl userClient;
 
     @MockBean
     private MessagingProducer messagingProducer;
@@ -91,7 +95,7 @@ public class AskTestIT {
 
         @Test
         void createAsk() throws Exception {
-            createAskDTO.setQuestion("Fiest question");
+            createAskDTO.setQuestion("First question");
             createAskDTO.setRoomId(UUID.randomUUID().toString());
 
             given(roomClient.findById(anyString())).willReturn(new RoomDTO());

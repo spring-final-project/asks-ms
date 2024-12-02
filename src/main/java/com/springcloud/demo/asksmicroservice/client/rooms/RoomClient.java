@@ -1,6 +1,6 @@
 package com.springcloud.demo.asksmicroservice.client.rooms;
 
-import com.springcloud.demo.asksmicroservice.client.rooms.config.FeignConfig;
+import com.springcloud.demo.asksmicroservice.client.config.FeignConfig;
 import com.springcloud.demo.asksmicroservice.client.rooms.dto.RoomDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

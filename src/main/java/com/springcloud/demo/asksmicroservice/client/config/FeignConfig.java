@@ -1,4 +1,4 @@
-package com.springcloud.demo.asksmicroservice.client.rooms.config;
+package com.springcloud.demo.asksmicroservice.client.config;
 
 import com.springcloud.demo.asksmicroservice.monitoring.XRayFeignInterceptor;
 import feign.RequestInterceptor;
